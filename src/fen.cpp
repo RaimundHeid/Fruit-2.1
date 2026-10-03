@@ -271,7 +271,7 @@ bool board_to_fen(const board_t * board, char fen[], int size) {
 
    // halfmove clock
 
-   sprintf(&fen[pos],"%d 1",board->ply_nb);
+   snprintf(&fen[pos],size-pos,"%d 1",board->ply_nb);
 
    return true;
 }

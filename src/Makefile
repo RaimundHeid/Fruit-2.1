@@ -34,7 +34,10 @@ CXXFLAGS += -fomit-frame-pointer
 
 # strip
 
+# Mac OS X's ld reports "-s is obsolete" and ignores it
+ifneq ($(shell uname -s),Darwin)
 LDFLAGS += -s
+endif
 
 # dependencies
 

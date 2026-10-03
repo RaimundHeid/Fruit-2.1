@@ -586,7 +586,7 @@ void send(const char format[], ...) {
    ASSERT(format!=NULL);
 
    va_start(arg_list,format);
-   vsprintf(string,format,arg_list);
+   vsnprintf(string,sizeof(string),format,arg_list);
    va_end(arg_list);
 
    fprintf(stdout,"%s\n",string);
