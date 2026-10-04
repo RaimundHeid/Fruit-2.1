@@ -279,7 +279,7 @@ void search_update_best() {
 
    int move, value, flags, depth, max_depth;
    const mv_t * pv;
-   double time;
+   double time, speed;
    sint64 node_nb;
    int mate;
    char move_string[256], pv_string[512];
@@ -296,6 +296,7 @@ void search_update_best() {
 
       max_depth = SearchCurrent->max_depth;
       time = SearchCurrent->time;
+      speed = SearchCurrent->speed;
       node_nb = SearchCurrent->node_nb;
 
       move_to_string(move,move_string,256);
@@ -309,11 +310,11 @@ void search_update_best() {
 
          if (false) {
          } else if (flags == SearchExact) {
-            send("info depth %d seldepth %d score cp %d time %.0f nodes " S64_FORMAT " pv %s",depth,max_depth,value,time*1000.0,node_nb,pv_string);
+            send("info depth %d seldepth %d score cp %d time %.0f nodes " S64_FORMAT " nps %.0f pv %s",depth,max_depth,value,time*1000.0,node_nb,speed,pv_string);
          } else if (flags == SearchLower) {
-            send("info depth %d seldepth %d score cp %d lowerbound time %.0f nodes " S64_FORMAT " pv %s",depth,max_depth,value,time*1000.0,node_nb,pv_string);
+            send("info depth %d seldepth %d score cp %d lowerbound time %.0f nodes " S64_FORMAT " nps %.0f pv %s",depth,max_depth,value,time*1000.0,node_nb,speed,pv_string);
          } else if (flags == SearchUpper) {
-            send("info depth %d seldepth %d score cp %d upperbound time %.0f nodes " S64_FORMAT " pv %s",depth,max_depth,value,time*1000.0,node_nb,pv_string);
+            send("info depth %d seldepth %d score cp %d upperbound time %.0f nodes " S64_FORMAT " nps %.0f pv %s",depth,max_depth,value,time*1000.0,node_nb,speed,pv_string);
          }
 
       } else {
@@ -322,11 +323,11 @@ void search_update_best() {
 
          if (false) {
          } else if (flags == SearchExact) {
-            send("info depth %d seldepth %d score mate %d time %.0f nodes " S64_FORMAT " pv %s",depth,max_depth,mate,time*1000.0,node_nb,pv_string);
+            send("info depth %d seldepth %d score mate %d time %.0f nodes " S64_FORMAT " nps %.0f pv %s",depth,max_depth,mate,time*1000.0,node_nb,speed,pv_string);
          } else if (flags == SearchLower) {
-            send("info depth %d seldepth %d score mate %d lowerbound time %.0f nodes " S64_FORMAT " pv %s",depth,max_depth,mate,time*1000.0,node_nb,pv_string);
+            send("info depth %d seldepth %d score mate %d lowerbound time %.0f nodes " S64_FORMAT " nps %.0f pv %s",depth,max_depth,mate,time*1000.0,node_nb,speed,pv_string);
          } else if (flags == SearchUpper) {
-            send("info depth %d seldepth %d score mate %d upperbound time %.0f nodes " S64_FORMAT " pv %s",depth,max_depth,mate,time*1000.0,node_nb,pv_string);
+            send("info depth %d seldepth %d score mate %d upperbound time %.0f nodes " S64_FORMAT " nps %.0f pv %s",depth,max_depth,mate,time*1000.0,node_nb,speed,pv_string);
          }
       }
    }
@@ -385,7 +386,7 @@ void search_update_current() {
 
    node_nb = SearchCurrent->node_nb;
    time = (UseCpuTime) ? my_timer_elapsed_cpu(timer) : my_timer_elapsed_real(timer);
-   speed = (time > 0.0) ? double(node_nb) / time : 0.0; // nodes per second
+   speed = (time >= 0.010) ? double(node_nb) / time : 0.0; // gate: need 10 ms to be meaningful
    cpu = my_timer_cpu_usage(timer);
 
    SearchCurrent->time = time;
