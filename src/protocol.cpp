@@ -15,6 +15,7 @@
 #include "material.h"
 #include "move.h"
 #include "move_do.h"
+#include "move_gen.h"
 #include "move_legal.h"
 #include "option.h"
 #include "pawn.h"
@@ -435,6 +436,7 @@ static void parse_position(char string[]) {
    char move_string[256];
    int move;
    undo_t undo[1];
+   list_t list[1];
 
    // init
 
@@ -480,6 +482,11 @@ static void parse_position(char string[]) {
          }
 
          move = move_from_string(move_string,SearchInput->board);
+
+         // reject illegal moves: move_do() requires a legal move
+
+         gen_legal_moves(list,SearchInput->board);
+         if (!list_contain(list,move)) break;
 
          move_do(SearchInput->board,move,undo);
 
