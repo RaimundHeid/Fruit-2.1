@@ -385,7 +385,7 @@ void search_update_current() {
 
    node_nb = SearchCurrent->node_nb;
    time = (UseCpuTime) ? my_timer_elapsed_cpu(timer) : my_timer_elapsed_real(timer);
-   speed = (time >= 1.0) ? double(node_nb) / time : 0.0;
+   speed = (time > 0.0) ? double(node_nb) / time : 0.0; // nodes per second
    cpu = my_timer_cpu_usage(timer);
 
    SearchCurrent->time = time;
